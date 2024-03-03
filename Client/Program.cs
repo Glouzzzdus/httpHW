@@ -4,27 +4,32 @@ using System.Threading.Tasks;
 
 class Program
 {
-    static readonly HttpClient client = new HttpClient();
+    static readonly HttpClient client = new HttpClient { Timeout = TimeSpan.FromSeconds(40) };
 
     static async Task Main()
     {
-        // Call asynchronous network methods in a try/catch block to handle exceptions.
-        try
+        string[] urls = new[]
         {
-            HttpResponseMessage response = await client.GetAsync("http://localhost:8888/");
-            Console.WriteLine("Sending request...");
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
+            "http://localhost:8888/Information/",
+            "http://localhost:8888/Success/",
+            "http://localhost:8888/Redirection/",
+            "http://localhost:8888/ClientError/",
+            "http://localhost:8888/ServerError/"
+        };
 
-            // Above three lines can be replaced with new helper method below
-            // string responseBody = await client.GetStringAsync(uri);
-
-            Console.WriteLine(responseBody);
-        }
-        catch (HttpRequestException e)
+        foreach (var url in urls)
         {
-            Console.WriteLine("\nException Caught!");
-            Console.WriteLine("Message :{0} ", e.Message);
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                Console.WriteLine(url + " " + (int)response.StatusCode + " " + response.StatusCode);
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("Exception Caught!");
+                Console.WriteLine($"Failed at fetching {url}. Message :{e.Message}");
+            }
         }
     }
 }
