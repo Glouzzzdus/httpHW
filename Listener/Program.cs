@@ -35,16 +35,21 @@ public class Listener
                     break;
                 case "/ClientError/":
                     response.StatusCode = 400;
-                    responseString = "Client Error!";
+                    responseString = "ClientError!";
                     break;
                 case "/ServerError/":
                     response.StatusCode = 500;
-                    responseString = "Server Error!";
+                    responseString = "ServerError!";
                     break;
                 case "/MyNameByHeader/":
                     response.StatusCode = 200;
                     response.Headers.Add("X-MyName", "YourName");
                     responseString = "Name is added in the header!";
+                    break;
+                case "/MyNameByCookies/":
+                    response.StatusCode = 200;
+                    response.Cookies.Add(new Cookie("MyName", "YourName"));
+                    responseString = "Cookie has been set!";
                     break;
                 default:
                     response.StatusCode = 404;
